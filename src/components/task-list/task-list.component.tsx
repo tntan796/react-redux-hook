@@ -46,10 +46,10 @@ function TaskList() {
     return (
         <div className="card p-p-3">
             <div className="p-shadow-3 p-p-2">
-                <TaskDetail></TaskDetail>
+                <TaskDetail ></TaskDetail>
             </div>
 
-            <div className="p-shadow-3 p-p-2 p-mt-2">
+            <div className="p-shadow-3 p-p-2 p-mt-5">
                 <div className="p-grid">
                     <div className="p-col-3">
                         <span className="p-input-icon-left">
