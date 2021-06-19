@@ -1,5 +1,5 @@
 import { DataTable } from 'primereact/datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Column } from 'primereact/column';
 import TaskService from '../../services/task.service';
 import TaskModel from '../../models/task.model';
@@ -7,13 +7,15 @@ import React from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import TaskDetail from '../task-detail/task-detail.component';
-function TaskList() {
+import { Toast } from 'primereact/toast';
 
+function TaskList() {
     const taskService = new TaskService();
     const [tasks, setTasks] = useState<TaskModel[]>([]);
     const [search, setSearch] = useState('');
     const [displayForm, setDisplayForm] = useState(false);
-
+    const [editTaskData, setEditTaskData] = useState<TaskModel>(new TaskModel());
+    const toast: any = useRef(null);
     useEffect(() => {
         taskService.getTasks().subscribe(response => {
             setTasks(response);
@@ -21,11 +23,31 @@ function TaskList() {
     }, []);
 
     const editTask = (task: TaskModel) => {
-        console.log('Edit task:', task);
+        setDisplayForm(true);
+        setEditTaskData(task);
     }
 
     const deleteTask = (task: TaskModel) => {
-        console.log('Delete task:', task);
+        try {
+            const tasksData = [...tasks];
+            const taskDeleteIndex = tasksData.findIndex(t => t.id === task.id);
+            if (taskDeleteIndex !== -1) {
+                tasksData.splice(taskDeleteIndex, 1);
+            }
+            setTasks(tasksData);
+            toast.current.show({severity:'success', summary: 'Success Message', detail:'Delete Success', life: 3000});
+        } catch (error) {
+            toast.current.show({severity:'error', summary: 'Error Message', detail:'Delete Fail', life: 3000});
+        }
+    }
+
+    const openForm = () => {
+        setDisplayForm(true);
+    }
+
+    const handleAdd = () => {
+        setEditTaskData(new TaskModel())
+        openForm();
     }
 
     const actionBodyTemplate = (rowData: TaskModel) => {
@@ -43,25 +65,37 @@ function TaskList() {
         })
     }
 
+    const handleSave = (data: TaskModel) => {
+        console.log('Save:', data);
+    }
+
     return (
         <div className="card p-p-3">
-            <div className="p-shadow-3 p-p-2">
-                <TaskDetail ></TaskDetail>
-            </div>
+            {displayForm && (
+                <div className="p-shadow-3 p-p-2">
+                    <TaskDetail
+                        saveEvent = {handleSave}
+                        closeFormEvent = {() => setDisplayForm(false)}
+                        openFormEvent = {openForm}
+                        editTask = {editTaskData}
+                    ></TaskDetail>
+                </div>
+            )}
 
             <div className="p-shadow-3 p-p-2 p-mt-5">
+                <h4>Danh sách Task</h4>
                 <div className="p-grid">
                     <div className="p-col-3">
-                        <span className="p-input-icon-left">
+                        <span className="p-input-icon-left w-100">
                             <i className="pi pi-search" />
-                            <InputText value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" />
+                            <InputText value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="w-100"/>
                         </span>
                     </div>
                     <div className="p-col-3">
                         <Button onClick={() => handleFilter()} icon="pi pi-search" iconPos="right" />
                     </div>
                     <div className="p-col-6 p-text-right">
-                        <Button label="Thêm mới" onClick={() => handleFilter()} icon="pi pi-plus" iconPos="right" />
+                        <Button label="Thêm mới" onClick={() => handleAdd()} icon="pi pi-plus" iconPos="right" />
                     </div>
                 </div>
                 <DataTable value={tasks}>
@@ -72,6 +106,7 @@ function TaskList() {
                     <Column body={actionBodyTemplate}></Column>
                 </DataTable>
             </div>
+            <Toast ref={toast} />
         </div>
     )
 }

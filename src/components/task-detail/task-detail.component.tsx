@@ -1,5 +1,5 @@
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TaskStatus } from '../../commons/constants';
 import './task-detail.component.css';
 import { Dropdown } from 'primereact/dropdown';
@@ -7,23 +7,39 @@ import { Button } from 'primereact/button';
 import TaskModel from '../../models/task.model';
 
 function TaskDetail(props: any) {
-    const {task} = props;
+    const { editTask, saveEvent, closeFormEvent, openFormEvent } = props;
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState(TaskStatus.READY);
+    const [id, setId] = useState('');
+    const [status, setStatus] = useState<any>(TaskStatus.READY);
     const statusList = [
         { name: TaskStatus.READY, code: TaskStatus.READY },
         { name: TaskStatus.IN_PROGRESS, code: TaskStatus.IN_PROGRESS },
         { name: TaskStatus.SUCCESS, code: TaskStatus.SUCCESS }
     ]
 
+    useEffect(() => {
+        setId(editTask.id);
+        setName(editTask.name);
+        setDescription(editTask.description);
+        setStatus(statusList.find(t => t.code === editTask.status));
+    }, [editTask.id])
+
     const handleSave = () => {
-        const data = {name, description, status};
-        console.log(data);
+        const data = new TaskModel(id, name, description, status.code);
+        saveEvent(data);
+    }
+
+    const closeForm = () => {
+        closeFormEvent();
     }
 
     return (
-        <div className="p-grid p-pt-4">
+        <div className="p-grid p-pt-2">
+            <div className="p-col-12">
+                <h4>Thêm mới</h4>
+                <input value = {id} hidden/>
+            </div>
             <div className="p-col-12 p-md-6 p-lg-3">
                 <span className="p-float-label p-input-icon-left w-100">
                     <i className="pi pi-search" />
@@ -45,8 +61,9 @@ function TaskDetail(props: any) {
                     <label htmlFor="dropdown">Status</label>
                 </span>
             </div>
-            <div className="p-col-12 p-md-6 p-lg-3">
-                <Button label="Lưu lại" icon="pi pi-check" onClick={() => handleSave()} />
+            <div className="p-col-12 p-text-right">
+                <Button label="Lưu lại" className="p-mr-1" icon="pi pi-check" onClick={() => handleSave()} />
+                <Button label="Đóng lại" icon="pi pi-times" className="p-button-danger" onClick = {() => closeForm()}/>
             </div>
         </div>
     )
