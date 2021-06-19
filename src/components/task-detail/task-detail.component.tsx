@@ -38,7 +38,7 @@ function TaskDetail(props: any) {
         <div className="p-grid p-pt-2">
             <div className="p-col-12">
                 <h4>Thêm mới</h4>
-                <input value = {id} hidden/>
+                <input value = {id} hidden onChange={(e) => setId(e.target.value)}/>
             </div>
             <div className="p-col-12 p-md-6 p-lg-3">
                 <span className="p-float-label p-input-icon-left w-100">
