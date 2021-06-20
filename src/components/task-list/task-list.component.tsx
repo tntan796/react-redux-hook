@@ -9,19 +9,26 @@ import { InputText } from 'primereact/inputtext';
 import TaskDetail from '../task-detail/task-detail.component';
 import { Toast } from 'primereact/toast';
 import { firstValueFrom } from 'rxjs';
+import { useDispatch, useSelector } from 'react-redux';
+import * as taskActions from '../../redux/actions/action';
+interface RootState {
+    tasks: TaskModel[]
+}
 
 function TaskList() {
     const taskService = new TaskService();
-    const [tasks, setTasks] = useState<TaskModel[]>([]);
+    const taskData = useSelector((state: RootState) => state.tasks);
+    const dispatch = useDispatch();
+    const [tasks, setTasks] = useState<TaskModel[]>(taskData);
     const [search, setSearch] = useState('');
     const [displayForm, setDisplayForm] = useState(false);
     const [editTaskData, setEditTaskData] = useState<TaskModel>(new TaskModel());
     const toast: any = useRef(null);
-
     useEffect(() => {
-        taskService.getTasks().subscribe(response => {
-            setTasks(response);
-        })
+        // taskService.getTasks().subscribe(response => {
+        //     setTasks(response);
+        // })
+        dispatch(taskActions.getTasks());
     }, []);
 
     const editTask = (task: TaskModel) => {
