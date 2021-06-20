@@ -8,6 +8,21 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var tasksRouter = require('./routes/tasks');
 var cors = require('cors')
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Library API',
+      version: '1.0.0',
+    },
+  },
+  apis: [`backend/server-api/routes/*.js`], // files containing annotations as above
+  
+};
+const swaggerDocs = swaggerJsdoc(options);
+
 var app = express();
 app.use(cors());
 // view engine setup
@@ -23,11 +38,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
