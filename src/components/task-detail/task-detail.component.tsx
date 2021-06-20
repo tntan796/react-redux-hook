@@ -1,29 +1,33 @@
 import { InputText } from 'primereact/inputtext';
 import { useEffect, useState } from 'react';
-import { TaskStatus } from '../../commons/constants';
+import { RootState, TaskStatus } from '../../commons/constants';
 import './task-detail.component.css';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import TaskModel from '../../models/task.model';
+import { useDispatch, useSelector } from 'react-redux';
+import * as taskActions from '../../redux/actions/action';
 
 function TaskDetail(props: any) {
-    const { editTask, saveEvent, closeFormEvent, openFormEvent } = props;
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [id, setId] = useState('');
+    const { saveEvent } = props;
+    const [name, setName] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+    const [id, setId] = useState<string>('');
     const [status, setStatus] = useState<any>(TaskStatus.READY);
+    const selectedTask = useSelector((state: RootState) => state.selectedTask);
     const statusList = [
         { name: TaskStatus.READY, code: TaskStatus.READY },
         { name: TaskStatus.IN_PROGRESS, code: TaskStatus.IN_PROGRESS },
         { name: TaskStatus.SUCCESS, code: TaskStatus.SUCCESS }
     ]
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        setId(editTask.id);
-        setName(editTask.name);
-        setDescription(editTask.description);
-        setStatus(statusList.find(t => t.code === editTask.status));
-    }, [editTask.id])
+        setId(selectedTask.id);
+        setName(selectedTask.name);
+        setDescription(selectedTask.description);
+        setStatus(statusList.find(t => t.code === selectedTask.status));
+    }, [selectedTask])
 
     const handleSave = () => {
         const data = new TaskModel(id, name, description, status.code);
@@ -31,7 +35,7 @@ function TaskDetail(props: any) {
     }
 
     const closeForm = () => {
-        closeFormEvent();
+        dispatch(taskActions.openTaskForm());
     }
 
     return (

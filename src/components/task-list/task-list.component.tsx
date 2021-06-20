@@ -1,54 +1,46 @@
 import { DataTable } from 'primereact/datatable';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Column } from 'primereact/column';
-import TaskService from '../../services/task.service';
 import TaskModel from '../../models/task.model';
 import React from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import TaskDetail from '../task-detail/task-detail.component';
 import { Toast } from 'primereact/toast';
-import { firstValueFrom } from 'rxjs';
 import { useDispatch, useSelector } from 'react-redux';
 import * as taskActions from '../../redux/actions/action';
-interface RootState {
-    tasks: TaskModel[]
-}
+import { RootState } from '../../commons/constants';
+import TaskService from '../../services/task.service';
+
 
 function TaskList() {
-    const taskService = new TaskService();
-    const taskData = useSelector((state: RootState) => state.tasks);
+    let tasks = useSelector((state: RootState) => state.tasks);
+    const isDisplayTaskForm = useSelector((state: RootState) => state.isDisplayTaskForm);
+    const search = useSelector((state: RootState) => state.search);
     const dispatch = useDispatch();
-    const [tasks, setTasks] = useState<TaskModel[]>(taskData);
-    const [search, setSearch] = useState('');
-    const [displayForm, setDisplayForm] = useState(false);
-    const [editTaskData, setEditTaskData] = useState<TaskModel>(new TaskModel());
     const toast: any = useRef(null);
+    const taskService = new TaskService();
     useEffect(() => {
-        // taskService.getTasks().subscribe(response => {
-        //     setTasks(response);
-        // })
         dispatch(taskActions.getTasks());
-    }, []);
+        taskService.getTasks().subscribe(res => {
+            console.log('hehehe', res);
+            
+        })
+    }, [dispatch]);
 
     const editTask = (task: TaskModel) => {
-        setDisplayForm(true);
-        setEditTaskData(task);
+        dispatch(taskActions.openTaskForm())
+        dispatch(taskActions.selectedTask(task));
     }
 
     const handleAdd = () => {
-        setEditTaskData(new TaskModel())
+        dispatch(taskActions.selectedTask(new TaskModel()));
         openForm();
     }
 
     const deleteTask = (task: TaskModel) => {
         try {
-            const tasksData = [...tasks];
-            const taskDeleteIndex = tasksData.findIndex(t => t.id === task.id);
-            if (taskDeleteIndex !== -1) {
-                tasksData.splice(taskDeleteIndex, 1);
-            }
-            setTasks(tasksData);
+            dispatch(taskActions.deleteTask(task.id));
             toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Delete Success', life: 3000 });
         } catch (error) {
             toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Delete Fail', life: 3000 });
@@ -56,7 +48,7 @@ function TaskList() {
     }
 
     const openForm = () => {
-        setDisplayForm(true);
+        dispatch(taskActions.openTaskForm());
     }
 
     const actionBodyTemplate = (rowData: TaskModel) => {
@@ -69,26 +61,28 @@ function TaskList() {
     }
 
     const handleFilter = () => {
-        taskService.filterTask(search, '').subscribe(res => {
-            setTasks(res);
-        })
+        dispatch(taskActions.getTasks());
+        tasks = [...tasks.filter(t => t.name.toLocaleLowerCase() === search.toLocaleLowerCase()
+        || t.description.toLocaleLowerCase() === search.toLocaleLowerCase())];
+        console.log('Tasks:', tasks);
     }
 
     const handleSave = async (task: TaskModel) => {
         if (!task.id) {
             try {
-                await firstValueFrom(taskService.addTask(task));
+                // await firstValueFrom(taskService.addTask(task));
+                dispatch(taskActions.addTask(task));
+                dispatch(taskActions.closeTaskForm());
                 toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Add Success', life: 3000 });
-                setDisplayForm(false);
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Add Fail', life: 3000 });
             }
         } else {
             try {
-                await firstValueFrom(taskService.updateTask(task));
                 toast.current.show({ severity: 'success', summary: 'Error Message', detail: 'Edit Success', life: 3000 });
+                dispatch(taskActions.editTask(task));
                 // Change state => Re-render
-                setDisplayForm(false);
+                dispatch(taskActions.closeTaskForm());
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Edit Fail', life: 3000 });
             }
@@ -97,13 +91,12 @@ function TaskList() {
 
     return (
         <div className="card p-p-3">
-            {displayForm && (
+            {isDisplayTaskForm && (
                 <div className="p-shadow-3 p-p-2">
                     <TaskDetail
                         saveEvent={handleSave}
-                        closeFormEvent={() => setDisplayForm(false)}
+                        closeFormEvent={() => dispatch(taskActions.closeTaskForm())}
                         openFormEvent={openForm}
-                        editTask={editTaskData}
                     ></TaskDetail>
                 </div>
             )}
@@ -114,7 +107,7 @@ function TaskList() {
                     <div className="p-col-3">
                         <span className="p-input-icon-left w-100">
                             <i className="pi pi-search" />
-                            <InputText value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" className="w-100" />
+                            <InputText value={search} onChange={(e) => dispatch(taskActions.searchTask(e.target.value))} placeholder="Search" className="w-100" />
                         </span>
                     </div>
                     <div className="p-col-3">
