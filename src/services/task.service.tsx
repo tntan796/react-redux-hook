@@ -3,12 +3,12 @@ import { ResponseType } from "../commons/constants";
 const axios = require('axios');
 const baseUrl = 'http://localhost:6789';
 class TaskService {
-    getRequest(url: string, option: any = {}): Observable<ResponseType> {
-        return of<ResponseType>(axios({
+    getRequest(url: string, option: any = {}) {
+        return axios({
             method: 'GET',
             url,
             ...option
-        }));
+        });
     }
 
     postRequest<T>(url: string, data: T, option: any = {}) {

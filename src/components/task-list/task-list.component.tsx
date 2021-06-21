@@ -10,8 +10,6 @@ import { Toast } from 'primereact/toast';
 import { useDispatch, useSelector } from 'react-redux';
 import * as taskActions from '../../redux/actions/action';
 import { RootState } from '../../commons/constants';
-import TaskService from '../../services/task.service';
-
 
 function TaskList() {
     let tasks = useSelector((state: RootState) => state.tasks);
@@ -19,13 +17,8 @@ function TaskList() {
     const search = useSelector((state: RootState) => state.search);
     const dispatch = useDispatch();
     const toast: any = useRef(null);
-    const taskService = new TaskService();
     useEffect(() => {
-        dispatch(taskActions.getTasks());
-        taskService.getTasks().subscribe(res => {
-            console.log('hehehe', res);
-            
-        })
+        dispatch(taskActions.getTasksRequest());
     }, [dispatch]);
 
     const editTask = (task: TaskModel) => {

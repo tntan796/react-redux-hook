@@ -1,8 +1,16 @@
 import TaskModel from '../../models/task.model';
 import { ACTION_TYPE } from './../../commons/constants';
 import { Dispatch} from 'redux';
+import TaskService from '../../services/task.service';
+
+const taskService = new TaskService();
+
 export const getTasksRequest= () => {
-    return async (dispatch: Dispatch) => {
+    return (dispatch: Dispatch) => {
+        taskService.getTasks().then((response: any) => {
+            console.log('response:', response);
+            dispatch(setTasks(response.data.data))
+        })
     }
 }
 
