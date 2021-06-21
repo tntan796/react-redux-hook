@@ -38,6 +38,25 @@ export const searchTask = (search: string) => {
     }
 }
 
+export const filterTaskRequest = (search: string) => {
+    return (dispatch: Dispatch) => {
+        return taskService.fitlerTasks(search)
+            .then((response: any) => {
+                dispatch(setTasks(response.data.data))
+            })
+            .catch((error: any) => {
+                throwError(() => new Error(error))
+            })
+    }
+}
+
+export const filterTaskSuccess = (tasks: TaskModel[]) => {
+    return {
+        type: ACTION_TYPE.FILTER_TASK_SUCCESS,
+        payload: tasks
+    }
+}
+
 export const addTaskRequest = (task: TaskModel) => {
     return (dispatch: Dispatch) => {
         return taskService.addTasks(task)

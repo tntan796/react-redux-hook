@@ -54,10 +54,7 @@ function TaskList() {
     }
 
     const handleFilter = () => {
-        dispatch(taskActions.getTasks());
-        tasks = [...tasks.filter(t => t.name.toLocaleLowerCase() === search.toLocaleLowerCase()
-        || t.description.toLocaleLowerCase() === search.toLocaleLowerCase())];
-        console.log('Tasks:', tasks);
+        dispatch(taskActions.filterTaskRequest(search));
     }
 
     const handleSave = async (task: TaskModel) => {

@@ -42,6 +42,10 @@ class TaskService {
         return this.getRequest(`${baseUrl}/tasks`);
     }
 
+    fitlerTasks(search: string) {
+        return this.getRequest(`${baseUrl}/tasks/filter/${search}`);
+    }
+
     addTasks(task: TaskModel) {
         return this.postRequest(`${baseUrl}/tasks/create`, task);
     }
