@@ -13,6 +13,20 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/filter/:search?', function (req, res, next) {
+  const search = req.params.search || '';
+  let findTask = [...tasks];
+  if (search) {
+    findTask = tasks.filter(t => t.name.toLowerCase().includes(search.toLowerCase())
+    || t.description.toLowerCase().includes(search.toLowerCase()));
+  }
+  res.status(200).json({
+    success: true,
+    message: '',
+    data: findTask
+  });
+});
+
 router.get('/:id', function(req, res, next) {
     const id = req.params.id;
     const findTask = tasks.find(t => t.id === id);
@@ -55,8 +69,6 @@ router.post('/edit', function(req, res, next) {
     const updateIndex = tasks.findIndex(t => t.id === data.id);
     if (updateIndex !== -1) {
       tasks[updateIndex] = {...tasks[updateIndex], ...data};
-      console.log('index:', updateIndex);
-      console.log(tasks);
       res.status(200).json({
         success: true,
         message: '',
