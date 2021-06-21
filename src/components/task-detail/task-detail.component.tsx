@@ -35,11 +35,11 @@ function TaskDetail(props: any) {
     }
 
     const closeForm = () => {
-        dispatch(taskActions.openTaskForm());
+        dispatch(taskActions.closeTaskForm());
     }
 
     return (
-        <div className="p-grid p-pt-2">
+        <div className="p-grid">
             <div className="p-col-12">
                 <h4>Thêm mới</h4>
                 <input value = {id} hidden onChange={(e) => setId(e.target.value)}/>

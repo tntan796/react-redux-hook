@@ -90,9 +90,9 @@ function TaskList() {
     }
 
     return (
-        <div className="card p-p-3">
+        <div className="card p-p-3 p-pt-0">
             {isDisplayTaskForm && (
-                <div className="p-shadow-3 p-p-2">
+                <div className="p-shadow-3 p-p-2 p-pt-0 p-mb-2">
                     <TaskDetail
                         saveEvent={handleSave}
                         closeFormEvent={() => dispatch(taskActions.closeTaskForm())}
@@ -101,8 +101,8 @@ function TaskList() {
                 </div>
             )}
 
-            <div className="p-shadow-3 p-p-2 p-mt-5">
-                <h4>Danh sách Task</h4>
+            <div className="p-shadow-3 p-p-2 p-mt-0">
+                <h4 className="p-pt-0">Danh sách Task</h4>
                 <div className="p-grid">
                     <div className="p-col-3">
                         <span className="p-input-icon-left w-100">

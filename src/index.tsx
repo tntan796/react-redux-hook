@@ -9,14 +9,16 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-
+import { BrowserRouter as Router} from "react-router-dom";
 import rootReducer from './redux/reducers/root.reducer';
 const store = createStore(rootReducer, (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__());
 
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </React.StrictMode>
   </Provider>
   ,
