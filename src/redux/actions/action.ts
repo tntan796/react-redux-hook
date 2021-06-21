@@ -1,16 +1,20 @@
 import TaskModel from '../../models/task.model';
 import { ACTION_TYPE } from './../../commons/constants';
-import { Dispatch} from 'redux';
+import { Dispatch } from 'redux';
 import TaskService from '../../services/task.service';
+import { throwError } from 'rxjs';
 
 const taskService = new TaskService();
 
-export const getTasksRequest= () => {
+export const getTasksRequest = () => {
     return (dispatch: Dispatch) => {
-        taskService.getTasks().then((response: any) => {
-            console.log('response:', response);
-            dispatch(setTasks(response.data.data))
-        })
+        return taskService.getTasks()
+            .then((response: any) => {
+                dispatch(setTasks(response.data.data))
+            })
+            .catch((error: any) => {
+                throwError(() => new Error(error))
+            })
     }
 }
 
@@ -34,9 +38,21 @@ export const searchTask = (search: string) => {
     }
 }
 
-export const addTask = (task: TaskModel) => {
+export const addTaskRequest = (task: TaskModel) => {
+    return (dispatch: Dispatch) => {
+        return taskService.addTasks(task)
+            .then((response: any) => {
+                dispatch(addTaskSuccess(response.data.data))
+            })
+            .catch((error: any) => {
+                throw new Error(error);
+            })
+    }
+}
+
+export const addTaskSuccess = (task: TaskModel) => {
     return {
-        type: ACTION_TYPE.ADD_TASK,
+        type: ACTION_TYPE.ADD_TASK_SUCCESS,
         payload: task
     }
 }

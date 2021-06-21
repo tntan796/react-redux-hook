@@ -64,7 +64,7 @@ function TaskList() {
         if (!task.id) {
             try {
                 // await firstValueFrom(taskService.addTask(task));
-                dispatch(taskActions.addTask(task));
+                dispatch(taskActions.addTaskRequest(task));
                 dispatch(taskActions.closeTaskForm());
                 toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Add Success', life: 3000 });
             } catch (error) {

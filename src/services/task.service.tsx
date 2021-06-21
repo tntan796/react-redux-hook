@@ -1,5 +1,6 @@
 import { Observable, of } from "rxjs";
 import { ResponseType } from "../commons/constants";
+import TaskModel from "../models/task.model";
 const axios = require('axios');
 const baseUrl = 'http://localhost:6789';
 class TaskService {
@@ -12,12 +13,12 @@ class TaskService {
     }
 
     postRequest<T>(url: string, data: T, option: any = {}) {
-        return of<ResponseType>(axios({
+        return axios({
             method: 'POST',
             url,
             data,
             ...option
-        }));
+        });
     }
 
     deleteRequest(url: string, option: any = {}): Observable<ResponseType> {
@@ -39,6 +40,10 @@ class TaskService {
 
     getTasks() {
         return this.getRequest(`${baseUrl}/tasks`);
+    }
+
+    addTasks(task: TaskModel) {
+        return this.postRequest(`${baseUrl}/tasks/create`, task);
     }
 }
 export default TaskService;
