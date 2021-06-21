@@ -92,9 +92,21 @@ export const closeTaskForm = () => {
     }
 }
 
-export const deleteTask = (id: string) => {
+export const deleteTaskRequest = (id: string) => {
+    return (dispatch: Dispatch) => {
+        return taskService.deleteTask(id)
+            .then(() => {
+                dispatch(deleteTaskSuccess(id))
+            })
+            .catch((error: any) => {
+                throw new Error(error);
+            })
+    }
+}
+
+export const deleteTaskSuccess = (id: string) => {
     return {
-        type: ACTION_TYPE.DELETE_TASK,
+        type: ACTION_TYPE.DELETE_TASK_SUCCESS,
         payload: id
     }
 }

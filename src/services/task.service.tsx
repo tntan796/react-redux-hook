@@ -21,8 +21,8 @@ class TaskService {
         });
     }
 
-    deleteRequest(url: string, option: any = {}): Observable<ResponseType> {
-        return of<ResponseType>(axios({
+    deleteRequest(url: string, option: any = {}) {
+        return (axios({
             method: 'DELETE',
             url,
             ...option
@@ -44,6 +44,10 @@ class TaskService {
 
     addTasks(task: TaskModel) {
         return this.postRequest(`${baseUrl}/tasks/create`, task);
+    }
+
+    deleteTask(id: string) {
+        return this.deleteRequest(`${baseUrl}/tasks/${id}`);
     }
 }
 export default TaskService;

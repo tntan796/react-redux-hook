@@ -33,7 +33,7 @@ function TaskList() {
 
     const deleteTask = (task: TaskModel) => {
         try {
-            dispatch(taskActions.deleteTask(task.id));
+            dispatch(taskActions.deleteTaskRequest(task.id));
             toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Delete Success', life: 3000 });
         } catch (error) {
             toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Delete Fail', life: 3000 });

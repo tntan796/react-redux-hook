@@ -84,7 +84,7 @@ router.delete('/:id', function(req, res, next) {
     const deleteIndex = tasks.findIndex(t => t.id === id);
     if (deleteIndex !== -1) {
       tasks.splice(deleteIndex, 1);
-      res.status(500).json({
+      res.status(200).json({
         success: true,
         message: '',
         data: null

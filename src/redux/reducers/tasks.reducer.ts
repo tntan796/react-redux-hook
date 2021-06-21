@@ -21,7 +21,7 @@ const taskReducer = (state: TaskModel[] = [], action: Actions) => {
             return [...tasks];
         case ACTION_TYPE.SET_TASKS:
             return [...action.payload];
-        case ACTION_TYPE.DELETE_TASK:
+        case ACTION_TYPE.DELETE_TASK_SUCCESS:
             const index = state.findIndex(t => t.id === action.payload);
             if (index !== -1) {
                 state.splice(index, 1);
