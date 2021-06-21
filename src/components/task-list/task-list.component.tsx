@@ -10,8 +10,6 @@ import { Toast } from 'primereact/toast';
 import { useDispatch, useSelector } from 'react-redux';
 import * as taskActions from '../../redux/actions/action';
 import { RootState } from '../../commons/constants';
-import TaskService from '../../services/task.service';
-
 
 function TaskList() {
     let tasks = useSelector((state: RootState) => state.tasks);
@@ -19,13 +17,8 @@ function TaskList() {
     const search = useSelector((state: RootState) => state.search);
     const dispatch = useDispatch();
     const toast: any = useRef(null);
-    const taskService = new TaskService();
     useEffect(() => {
-        dispatch(taskActions.getTasks());
-        taskService.getTasks().subscribe(res => {
-            console.log('hehehe', res);
-            
-        })
+        dispatch(taskActions.getTasksRequest());
     }, [dispatch]);
 
     const editTask = (task: TaskModel) => {
@@ -40,7 +33,7 @@ function TaskList() {
 
     const deleteTask = (task: TaskModel) => {
         try {
-            dispatch(taskActions.deleteTask(task.id));
+            dispatch(taskActions.deleteTaskRequest(task.id));
             toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Delete Success', life: 3000 });
         } catch (error) {
             toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Delete Fail', life: 3000 });
@@ -61,17 +54,14 @@ function TaskList() {
     }
 
     const handleFilter = () => {
-        dispatch(taskActions.getTasks());
-        tasks = [...tasks.filter(t => t.name.toLocaleLowerCase() === search.toLocaleLowerCase()
-        || t.description.toLocaleLowerCase() === search.toLocaleLowerCase())];
-        console.log('Tasks:', tasks);
+        dispatch(taskActions.filterTaskRequest(search));
     }
 
     const handleSave = async (task: TaskModel) => {
         if (!task.id) {
             try {
                 // await firstValueFrom(taskService.addTask(task));
-                dispatch(taskActions.addTask(task));
+                dispatch(taskActions.addTaskRequest(task));
                 dispatch(taskActions.closeTaskForm());
                 toast.current.show({ severity: 'success', summary: 'Success Message', detail: 'Add Success', life: 3000 });
             } catch (error) {

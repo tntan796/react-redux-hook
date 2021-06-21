@@ -7,11 +7,16 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import { createStore } from 'redux';
+import { compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router} from "react-router-dom";
+import thunk from 'redux-thunk';
 import rootReducer from './redux/reducers/root.reducer';
-const store = createStore(rootReducer, (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__());
+import { applyMiddleware } from 'redux';
+const store = createStore(rootReducer,
+  compose(
+    applyMiddleware(thunk)
+    , (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()));
 
 ReactDOM.render(
   <Provider store={store}>
@@ -20,8 +25,7 @@ ReactDOM.render(
         <App />
       </Router>
     </React.StrictMode>
-  </Provider>
-  ,
+  </Provider>,
   document.getElementById('root')
 );
 
